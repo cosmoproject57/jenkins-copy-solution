@@ -1,0 +1,153 @@
+---
+# tasks file for DeployFiles Directly from ServerA to ServerB
+# Source server is the Jenkins server
+#Destination server is the server on which build is to be copied
+
+- block:
+
+    - name: Copy the file from ServerA to ServerB
+      become_user: sag
+      run_once: true
+      synchronize:
+        src: "{{ jenkinsSrcPath }}"
+        dest: "{{ DestinationPath }}"
+        mode: pull
+      delegate_to: "{{ DestinationServer }}"
+      register: syncfile
+
+  rescue:
+    - name: Failed to copy file from ServerA to ServerB
+      run_once: true
+      delegate_to: "{{ DestinationServer }}"
+      fail:
+        msg: "Failed to Fetch file from Source to Ansible master with error message {{ ansible_failed_result  }}"
+
+
+- name: Copy Succesfully tasks
+  debug:
+    msg: Files and Folder copied Successfully
+
+
+- name: Untar the Files on destination server
+  block:
+
+     - name: Unarchive a file that is already on the remote machine
+       ansible.builtin.unarchive:
+         src: "{{ DestinationPath }}"
+         dest: "{{ DestinationPath }}"
+       delegate_to: "{{ DestinationServer }}"
+
+  rescue:
+    - name: Failed to copy file from ServerA to ServerB
+      run_once: true
+      delegate_to: "{{ DestinationServer }}"
+      fail:
+        msg: "Failed to Fetch file from Source to Ansible master with error message {{ ansible_failed_result  }}"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################ Using First Method  Copy file from first server to ansible , then ansible to Server B#################
+
+# - block:
+    
+#     - name: Copy the file from ServerA to Ansible master
+#       run_once: true
+#       fetch: 
+#         src: "{{item}}"
+#         dest: buffer/
+#         flat: yes
+#       when: "{{ inventory_hostname == 'ServerA' }}"
+#       loop:
+#        - SYSTEM
+#        - TRT10
+#        - TRT13
+#        - TRT18
+#        - TRT24
+#        - TRT26
+#        - TRT28
+#        - TRT48
+#        - TRTTAX
+#        - TRTWEB
+#        - WORKPLAN
+#        - ERR
+#        - FILEDIR.SAG
+#        - GP
+#        - SRC
+  
+#   rescue:
+#     - name: Failed to Fetch file from Source to Ansible master
+#       run_once: true
+#       fail:
+#         msg: "Failed to Fetch file from Source to Ansible master with error message {{ ansible_failed_result  }}"
+
+
+# - block:
+    
+#     - name: Copy the file from  Ansible master to ServerB
+#       run_once: true
+#       copy: 
+#         src: buffer/{{item}}
+#         dest: /home/{{item}}
+#       when: "{{ inventory_hostname == 'ServerB' }}"
+#       loop:
+#        - SYSTEM
+#        - TRT10
+#        - TRT13
+#        - TRT18
+#        - TRT24
+#        - TRT26
+#        - TRT28
+#        - TRT48
+#        - TRTTAX
+#        - TRTWEB
+#        - WORKPLAN
+#        - ERR
+#        - FILEDIR.SAG
+#        - GP
+#        - SRC
+  
+#   rescue:
+#     - name: Failed to Copy file  from Ansible master to ServerB
+#       run_once: true
+#       fail:
+#         msg: "Failed to Copy file from Ansible master to ServerB with error message {{ ansible_failed_result  }}"
+
+
+# - name: Copy Succesfully tasks
+#   debug:
+#     msg: Files and Folder copied Successfully
+
+
+# - name: Running the build process
+#   shell: ftouch
+#   register: build_output
+
+# - name: Display the build resultt
+#   debug:
+#    var: build_output

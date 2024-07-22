@@ -1,0 +1,15 @@
+---
+# defaults file for DeployFiles
+
+sourceServer: ServerA
+DestinationServer: ServerB
+
+artifactName: ""
+module: ""
+branch: ""
+version: ""
+zipFileName: ""
+buildNumber: ""
+
+jenkinsSrcPath: ""
+DestinationPath: ""

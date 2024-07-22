@@ -1,0 +1,7 @@
+- hosts: "{{ sourceServer }}"
+  gather_facts: false
+  become: yes
+  tasks:
+    - name: Include Role 
+      import_role:
+        - DeployJenkinsFiles
